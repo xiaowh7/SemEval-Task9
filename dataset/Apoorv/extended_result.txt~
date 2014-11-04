@@ -1,0 +1,37 @@
+TASK B
+Comparing predictions ../code/ans_Apoorv.txt to gold standard ../Apoorv/test.csv.
+File: ../code/ans_Apoorv.txt -- no errors found
+Prediction file: 664 lines
+                 664 unique
+Breakdown by class:
+positive 	220
+neutral 	195
+negative 	249
+File: ../Apoorv/test.csv -- no errors found
+
+
+Gold standard: 664 lines
+               664 unique
+Breakdown by class:
+positive 	323
+neutral 	114
+negative 	227
+
+
+Confusion table:
+gs \ pred| positive| negative|  neutral
+---------------------------------------
+ positive|      186|       51|       86
+ negative|       13|      179|       35
+  neutral|       21|       19|       74
+
+
+Scores:
+class	                       prec	              recall     fscore
+positive 	   (186/220) 0.8455	    (186/323) 0.5759	 0.6851	
+negative 	   (179/249) 0.7189	    (179/227) 0.7885	 0.7521	
+neutral 	    (74/195) 0.3795	     (74/114) 0.6491	 0.4790	
+-----------------------------------------------------------------------
+average(pos and neg)                                             0.7186	
+
+

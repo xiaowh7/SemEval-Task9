@@ -1,0 +1,36 @@
+Accuracy = 60.3774% (480/795) (classification)
+TASK B
+Comparing predictions ../code/ans_debate08.txt to gold standard ../debate08/test.csv.
+File: ../code/ans_debate08.txt -- no errors found
+Prediction file: 795 lines
+                 795 unique
+Breakdown by class:
+positive 	257
+neutral 	126
+negative 	412
+File: ../debate08/test.csv -- no errors found
+
+
+Gold standard: 795 lines
+               795 unique
+Breakdown by class:
+positive 	226
+neutral 	197
+negative 	372
+
+
+Confusion table:
+gs \ pred| positive| negative|  neutral
+---------------------------------------
+ positive|      138|       59|       29
+ negative|       45|      286|       41
+  neutral|       74|       67|       56
+
+
+Scores:
+class	                       prec	              recall     fscore
+positive 	   (138/257) 0.5370	    (138/226) 0.6106	 0.5714	
+negative 	   (286/412) 0.6942	    (286/372) 0.7688	 0.7296	
+neutral 	    (56/126) 0.4444	     (56/197) 0.2843	 0.3467	
+-----------------------------------------------------------------------
+average(pos and neg)                                             0.6505
