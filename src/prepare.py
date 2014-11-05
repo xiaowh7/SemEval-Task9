@@ -1,6 +1,5 @@
 from replaceExpand import *
 from collections import defaultdict
-from getDependency import *
 
 
 def loadDictionary():
@@ -304,25 +303,37 @@ def loadAFINNLexicon():
     return dict
 
 
-def loadSentenceDependency():
-    # trainFile = "../Apoorv/Apoorv_dependency_train.txt"
-    # trainFile = "../Apoorv/extended1_dependency_train.txt"
-    # trainFile = "../Apoorv/extended2_dependency_train.txt"
-    # trainFile = "../Apoorv/extendedAll_dependency_train.txt"
-    # testFile = "../Apoorv/Apoorv_dependency_test.txt"
+def getDependency(filename):
+    """
+    read dependencies from file
+    :param filename:
+    :return:
+        dependencies in form {key: type, value: [word1, word2]}
+    """
+    infile = open(filename, 'r')
+    dependencies = []
+    pattern = re.compile("[(),-]")
+    for line in infile.readlines():
+        dpds = line.strip('\t\n').split('\t')
+        ans = {}
+        for dpd in dpds:
+            match = re.split(pattern, dpd)
+            # print match
+            word1, word2, type = match[1], match[3], match[0]
+            # phrase = "%s %s" %(word1, word2)
+            # print word1, word2, dependency
+            if type not in ans:
+                ans[type] = [[word1, word2]]
+            else:
+                ans[type].append([word1, word2])
+        dependencies.append(ans)
 
-    # trainFile = "../debate08/debate08_dependency_train.txt"
-    # trainFile = "../debate08/extended1_dependency_train.txt"
-    # trainFile = "../debate08/extended2_dependency_train.txt"
-    # trainFile = "../debate08/extendedAll_dependency_train.txt"
-    # testFile = "../debate08/debate08_dependency_test.txt"
+    return dependencies
 
-    # trainFile = "../dataset/dependency_train.txt"
-    # trainFile = "../dataset/extended1_dependency_train.txt"
-    # trainFile = "../dataset/extended3_dependency_train.txt"
-    trainFile = "../dataset/extendedAll_dependency_train.txt"
-    testFile = "../dataset/dependency_test.txt"
-    # testFile = "../dataset/sms_dependency_test.txt"
-    trainDpds = getDependency(trainFile)
-    testDpds = getDependency(testFile)
-    return trainDpds, testDpds
+
+def loadDependency(trainDepFilename, testDepFilename):
+    print "Loading trainset dependencies..."
+    trainDependicies = getDependency(trainDepFilename)
+    print "Loading testset dependencies..."
+    testDependicies = getDependency(testDepFilename)
+    return trainDependicies, testDependicies

@@ -19,7 +19,6 @@ def output(gramDict, outfileName, threshold):
     for i in xrange(len(gramList)):
         if i > 0:
             outfile.write('\n')
-<<<<<<< HEAD
         outfile.write("%s" % gramList[i][0])
 
 
@@ -37,24 +36,6 @@ def createChargram(dataset, seqLen=3, threshold=0.9):
         infileName = "../dataset/Apoorv/trainingInput.txt"
         outfileName = \
             "../requirement/ngram/Apoorv/Apoorv_%dChargram.txt" % seqLen
-=======
-        outfile.write(gramList[i][0])
-
-
-def createChargram(dataset, seqLen=3, threshold=0.9):
-    if dataset == "Semeval" | "SemEval2014" | "semeval":
-        infileName = "./SemEval2014-Task9/trainingInput.txt"
-        outfileName = \
-            "./requirement/ngram/Semeval/Semeval_%dChargram.txt" % seqLen
-    elif dataset == "debate08":
-        infileName = "./dataset/dabate08/trainingInput.txt"
-        outfileName = \
-            "./requirement/ngram/debate08/debate08_%dChargram.txt" % seqLen
-    elif dataset == "Apoorv":
-        infileName = "./dataset/Apoorv/trainingInput.txt"
-        outfileName = \
-            "./requirement/ngram/Apoorv/Apoorv_%dChargram.txt" % seqLen
->>>>>>> 4236daefd4ecedce4c41ba3589a8d616c1c25ce1
     else:
         exit("Error: Wrong dataset\nPlease specify a valid dataset.")
 
@@ -94,7 +75,6 @@ def createNgram(dataset, phraseLen, threshold=0.8):
         exit("Error: Wrong value for phrase length\n"
              "Please specify a valid n for ngram.")
 
-<<<<<<< HEAD
     if dataset == "Semeval" or dataset == "SemEval2014" or \
         dataset == "semeval":
         infileName = "../SemEval2014-Task9/trainingInput.txt"
@@ -108,26 +88,11 @@ def createNgram(dataset, phraseLen, threshold=0.8):
         infileName = "../dataset/Apoorv/trainingInput.txt"
         outfileName = \
             "../requirement/ngram/Apoorv/Apoorv_%sgram.txt" % feature
-=======
-    if dataset == "Semeval" | "SemEval2014" | "semeval":
-        infileName = "./SemEval2014-Task9/trainingInput.txt"
-        outfileName = \
-            "./requirement/ngram/Semeval/Semeval_%sgram.txt" % feature
-    elif dataset == "debate08":
-        infileName = "./dataset/dabate08/trainingInput.txt"
-        outfileName = \
-            "./requirement/ngram/debate08/debate08_%sgram.txt" % feature
-    elif dataset == "Apoorv":
-        infileName = "./dataset/Apoorv/trainingInput.txt"
-        outfileName = \
-            "./requirement/ngram/Apoorv/Apoorv_%sgram.txt" % feature
->>>>>>> 4236daefd4ecedce4c41ba3589a8d616c1c25ce1
     else:
         exit("Error: Wrong dataset\nPlease specify a valid dataset.")
 
     ngramDict = {}
     infile = open(infileName, 'r')
-<<<<<<< HEAD
     for line in infile:
         if line:
             line = line.strip('\n').split('\t')
@@ -183,62 +148,6 @@ def createNgram(dataset, phraseLen, threshold=0.8):
                 else:
                     exit("Error: Wrong value for phrase length\n"
                          "Please specify a valid n for ngram.")
-=======
-    for i in infile:
-        if i:
-            # print i
-            i = i.split('\t')
-            tokens = i[1].split()
-            label = i[3].strip()
-            if tokens:
-                for token in tokens:
-                    token = token.strip(specialChar).lower()
-                    if phraseLen == 1:
-                        phrase = token
-                        if phrase not in ngramDict:
-                            ngramDict[phrase] = [0, 0, 0]
-                        ngramDict[token][eval(label)] += 1
-                    elif phraseLen == 2:
-                        for i in range(len(tokens) - 1):
-                            phrase = tokens[i] + ' ' + tokens[i + 1]
-                            if phrase not in ngramDict:
-                                ngramDict[phrase] = [0, 0, 0]
-                            ngramDict[token][eval(label)] += 1
-                    elif phraseLen == 3:
-                        for i in range(len(tokens) - 2):
-                            phrase = tokens[i] + ' ' + tokens[i + 1] + ' ' + \
-                                tokens[i + 2]
-                            if phrase not in ngramDict:
-                                ngramDict[phrase] = [0, 0, 0]
-                            ngramDict[phrase][eval(label)] += 1
-
-                            phrase = tokens[i] + ' ' + '*' + ' ' + tokens[i + 2]
-                            if phrase not in ngramDict:
-                                ngramDict[phrase] = [0, 0, 0]
-                            ngramDict[phrase][eval(label)] += 1
-                    elif phraseLen == 4:
-                        for i in range(len(tokens) - 3):
-                            phrase = tokens[i] + ' ' + tokens[i+1] + ' ' + \
-                                tokens[i+2] + ' ' + tokens[i+3]
-                            if phrase not in ngramDict:
-                                ngramDict[phrase] = [0, 0, 0]
-                            ngramDict[phrase][eval(label)] += 1
-        
-                            phrase = tokens[i] + ' ' + '*' + ' ' + \
-                                tokens[i+2] + ' ' + tokens[i+3]
-                            if phrase not in ngramDict:
-                                ngramDict[phrase] = [0, 0, 0]
-                            ngramDict[phrase][eval(label)] += 1
-        
-                            phrase = tokens[i] + ' ' + tokens[i+1] + ' ' + \
-                                '*' + ' ' + tokens[i+3]
-                            if phrase not in ngramDict:
-                                ngramDict[phrase] = [0, 0, 0]
-                            ngramDict[phrase][eval(label)] += 1
-                    else:
-                        exit("Error: Wrong value for phrase length\n"
-                             "Please specify a valid n for ngram.")
->>>>>>> 4236daefd4ecedce4c41ba3589a8d616c1c25ce1
 
     infile.close()
 
@@ -247,7 +156,6 @@ def createNgram(dataset, phraseLen, threshold=0.8):
 
 if __name__ == "__main__":
     dataset = "Semeval"
-<<<<<<< HEAD
     print "Creating %s_3Chargram.txt..." % dataset
     createChargram(dataset, 3, 0.9)
     print "Creating %s_4Chargram.txt..." % dataset
@@ -265,13 +173,3 @@ if __name__ == "__main__":
     createNgram(dataset, 4, 0.8)
 
     print "%s ngram created." % dataset
-=======
-    createChargram(dataset, 3, 0.9)
-    createChargram(dataset, 4, 0.9)
-    createChargram(dataset, 5, 0.9)
-
-    createNgram(dataset, 1, 0.8)
-    createNgram(dataset, 2, 0.8)
-    createNgram(dataset, 3, 0.8)
-    createNgram(dataset, 4, 0.8)
->>>>>>> 4236daefd4ecedce4c41ba3589a8d616c1c25ce1

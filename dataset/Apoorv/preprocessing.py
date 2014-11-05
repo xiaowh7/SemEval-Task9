@@ -36,13 +36,13 @@ def preprocess():
     # outfile1.close()
 
 def extractTweets():
-    infile1 = open('train.csv', 'r')
+    infile1 = open('Apoorv_train.csv', 'r')
     outfile1 = open('train_tweets.csv', 'w')
     for line in infile1.readlines():
         line = line.split('\t')[3]
         outfile1.write(line)
 
-    infile2 = open('test.csv', 'r')
+    infile2 = open('Apoorv_test.csv', 'r')
     outfile2 = open('test_tweets.csv', 'w')
     for line in infile2.readlines():
         line = line.split('\t')[3]

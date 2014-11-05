@@ -3,7 +3,7 @@ count = 0
 poscnt = 0
 negcnt = 0
 neucnt = 0
-inFile = open('train.csv', 'r')
+inFile = open('Apoorv_train.csv', 'r')
 
 outFile = open("train_without_neutral.csv", "w")
 for line in inFile.readlines():

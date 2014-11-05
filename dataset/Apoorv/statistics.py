@@ -8,8 +8,8 @@ postest = 0
 neutest = 0
 negtest = 0
 threshold = 900
-outFile = open('train.csv', 'w')
-testFile = open('test.csv', 'w')
+outFile = open('Apoorv_train.csv', 'w')
+testFile = open('Apoorv_test.csv', 'w')
 for line in inFile.readlines():
     data = line.split('\t')
     count += 1

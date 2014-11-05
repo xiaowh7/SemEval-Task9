@@ -125,6 +125,6 @@ secondThirdIndex = 2*firstThirdIndex
 # write_formatted_xml(tweets[:firstThirdIndex], "train.xml")
 # write_formatted_xml(tweets[firstThirdIndex:secondThirdIndex], "dev.xml")
 # write_formatted_xml(tweets[secondThirdIndex:], "test.xml")
-write_formatted_xml(tweets[:firstThirdIndex], "train.csv")
+write_formatted_xml(tweets[:firstThirdIndex], "Apoorv_train.csv")
 write_formatted_xml(tweets[firstThirdIndex:secondThirdIndex], "dev.csv")
-write_formatted_xml(tweets[secondThirdIndex:], "test.csv")
+write_formatted_xml(tweets[secondThirdIndex:], "Apoorv_test.csv")

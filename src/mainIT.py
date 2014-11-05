@@ -1,14 +1,10 @@
 __author__ = 'seven'
 """This src extracts the features and returns the features"""
 from featureExtractor import *
-from probablityModel import *
 import sys
 from classifier import *
 from prepare import *
-from collections import defaultdict
 from svmutil import *
-#from sklearn import naive_bayes
-#from sklearn.externals import joblib
 
 def findScore(words, vector):
     # find lexicon score for each word

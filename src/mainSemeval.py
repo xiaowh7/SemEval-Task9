@@ -1,32 +1,156 @@
 __author__ = 'seven'
-"""This src extracts the features and returns the features"""
 from featureExtractor import *
 from classifier import *
 from prepare import *
 from svmutil import *
 
-def findScore(words, vector):
+
+def init(dataset):
+    if dataset == "Semeval" or dataset == "SemEval2013" or \
+            dataset == "semeval":
+        trainFilename = "../dataset/SemEval2013-Task2B/trainset/" \
+                        "SemEval2013_train.csv"
+        testFilename = "../dataset/SemEval2013-Task2B/testset/tweet/" \
+                       "SemEval2013_test.csv"
+        trainDepFilename = "../dataset/SemEval2013-Task2B/trainset/" \
+                           "SemEval2013_train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2013-Task2B/testset/tweet/" \
+                       "SemEval2013_test_dependency.txt"
+    elif dataset == "Semeval-sms" or dataset == "SemEval2013-sms" or \
+            dataset == "semeval-sms":
+        trainFilename = "../dataset/SemEval2013-Task2B/trainset/" \
+                        "SemEval2013_train.csv"
+        testFilename = "../dataset/SemEval2013-Task2B/testset/sms/" \
+                       "SemEval2013-sms_test.csv"
+        trainDepFilename = "../dataset/SemEval2013-Task2B/trainset/" \
+                           "SemEval2013_train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2013-Task2B/testset/sms/" \
+                       "SemEval2013-sms_test_dependency.txt"
+    elif dataset == "debate08":
+        trainFilename = "../dataset/dabate08/debate08_train.csv"
+        testFilename = "../dataset/dabate08/debate08_test.csv"
+        trainDepFilename = "../dataset/dabate08/debate08_train_dependency.txt"
+        testDepFilename = "../dataset/dabate08/debate08_test_dependency.txt"
+    elif dataset == "Apoorv":
+        trainFilename = "../dataset/Apoorv/Apoorv_train.csv"
+        testFilename = "../dataset/Apoorv/Apoorv_test.csv"
+        trainDepFilename = "../dataset/Apoorv/Apoorv_train_dependency.txt"
+        testDepFilename = "../dataset/Apoorv/Apoorv_test_dependency.txt"
+    else:
+        exit("Error: Wrong dataset\nPlease specify a valid dataset.")
+
+    return trainFilename, testFilename, trainDepFilename, testDepFilename
+
+
+def getScoreFeatureVector(words, vector):
     # find lexicon score for each word
     vec = []
-    PosS140Vector, tmplist = findUniScore(words, S140Unigram, vec)
-    vector = vector + PosS140Vector
+    Sentiment140Vector, tmplist = findUniScore(words, S140Unigram, vec)
+    vector = vector + Sentiment140Vector
 
     vec = []
-    PosNRCVector, tmplist = findUniScore(words, NRCUnigram, vec)
-    vector = vector + PosNRCVector
+    NRCHashtagVector, tmplist = findUniScore(words, NRCUnigram, vec)
+    vector = vector + NRCHashtagVector
 
-    PosLiuBingVector = findManualLexiconScore(words, LiuBingDict)
-    vector = vector + PosLiuBingVector
-    PosMPQAVector = findManualLexiconScore(words, MPQADict)
-    vector = vector + PosMPQAVector
-    PosNRCEmoticonVector = findManualLexiconScore(words, NRCEmotionDict)
-    vector = vector + PosNRCEmoticonVector
-    PosPosNegWordsVector = findManualLexiconScore(words, PosNegWords)
-    vector = vector + PosPosNegWordsVector
-    PosAFINNVector = findAFINNScore(words, AFINNDict)
-    vector = vector + PosAFINNVector
+    LiuBingVector = findManualLexiconScore(words, LiuBingDict)
+    vector = vector + LiuBingVector
+
+    MPQAVector = findManualLexiconScore(words, MPQADict)
+    vector = vector + MPQAVector
+
+    NRCEmoticonVector = findManualLexiconScore(words, NRCEmotionDict)
+    vector = vector + NRCEmoticonVector
+
+    PosNegWordsDictVector = findManualLexiconScore(words, PosNegWordsDict)
+    vector = vector + PosNegWordsDictVector
+
+    AFINNVector = findAFINNScore(words, AFINNDict)
+    vector = vector + AFINNVector
     # print vector
     return vector
+
+
+def createFeatureVectors(datafile, dependencies):
+    labels = []
+    featureVectors = []
+    index = 0
+    infile = open(datafile, 'r')
+    for line in infile:
+        if line:
+            content = line.split('\t')
+            tweet = content[1].split()
+            token = content[2].split()
+            label = content[3].strip()
+            dependency = dependencies[index]
+            index += 1
+            if tweet:
+                labels.append(encode[label])
+                vector, words, hashtags, tweet = \
+                    findFeatures1(tweet, token, stopwords, emoticonsDict,
+                                  acronymDict, intensifiers)
+
+                # find context feature
+                S140ContextVector = findContextFeature(dependency, S140Unigram,
+                                                       emoticonsDict)
+                vector.extend(S140ContextVector)
+
+                NRCContextVector = findContextFeature(dependency, NRCUnigram,
+                                                      emoticonsDict)
+                vector.extend(NRCContextVector)
+
+                MPQAContextVector = findContextFeature1(dependency, MPQADict,
+                                                        intensifiers)
+                vector.extend(MPQAContextVector)
+
+
+                # find char and word gram feature
+                # chargramVector = findChargram(tweet, _3CharModel, _4CharModel, _5CharModel)
+                # vector = vector + chargramVector
+                #
+                # wordgramVector = findWordgram(tweet, uniModel, biModel, triModel, f4Model)
+                # vector = vector + wordgramVector
+
+
+                # find lexicon for each capitalised word
+                # vector = getScoreFeatureVector(capWords, vector)
+
+                # find hashtag score for each hashtag
+                vector = getScoreFeatureVector(hashtags, vector)
+
+                # find lexicon score for each pos-tags
+                tags = ['N', 'V', 'R', 'O', 'A']
+                for pos in words:
+                    if pos in tags:
+                        vector = getScoreFeatureVector(words[pos], vector)
+
+                # find score for each lexicon
+                S140Vector = findLexiconScore(tweet, S140Unigram, S140Bigram,
+                                              S140Pairs)
+                vector.extend(S140Vector)
+
+                NRCVector = findLexiconScore(tweet, NRCUnigram, NRCBigram,
+                                             NRCPairs)
+                vector.extend(NRCVector)
+
+                LiuBingVector = findManualLexiconScore(tweet, LiuBingDict)
+                vector.extend(LiuBingVector)
+
+                MPQAVector = findManualLexiconScore(tweet, MPQADict)
+                vector.extend(MPQAVector)
+
+                NRCEmotionVector = findManualLexiconScore(tweet, NRCEmotionDict)
+                vector.extend(NRCEmotionVector)
+
+                PosNegWordsDictVector = findManualLexiconScore(tweet,
+                                                               PosNegWordsDict)
+                vector.extend(PosNegWordsDictVector)
+
+                AFINNVector = findAFINNScore(tweet, AFINNDict)
+                vector.extend(AFINNVector)
+
+                featureVectors.append(vector)
+    infile.close()
+    return labels, featureVectors
 
 
 if __name__ == '__main__':
@@ -35,6 +159,17 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         print "Usage :: python mainSemeval.py SemEval2014"
         sys.exit("Error: wrong arguments")
+    else:
+        dataset = sys.argv[1]
+        encode = {'positive': 1.0, 'negative': 2.0, 'neutral': 3.0}
+        decode = {1.0: 'positive', 2.0: 'negative', 3.0: 'neutral'}
+        trainFilename, testFilename, trainDepFilename, testDepFilename = \
+            init(dataset)
+        goldStandard = []
+        predictResult = []
+        # unigramModel, bigramModel, trigramModel, _4gramModel, \
+        # _3ChargramModel, _4ChargramModel, _5ChargramModel = \
+        # loadNgram(dataset)
 
     acronymDict, emoticonsDict = loadDictionary()
     stopwords, intensifiers = loadOtherReferences()
@@ -45,198 +180,47 @@ if __name__ == '__main__':
     LiuBingDict = loadLiuBingLexicon()
     MPQADict = loadMPQALexicon()
     NRCEmotionDict = loadNRCEmoticonLexicon()
-    PosNegWords = loadPosNegWords()
+    PosNegWordsDict = loadPosNegWords()
     AFINNDict = loadAFINNLexicon()
 
-    exit(0)
-    trainDependencies, testDependencies = loadSentenceDependency()
+    trainDependencies, testDependencies = \
+        loadDependency(trainDepFilename, testDepFilename)
 
-    uniModel, biModel, triModel, f4Model, \
-    _3CharModel, _4CharModel, _5CharModel = loadNgram(sys.argv[1])
+    """Create feature vectors of training set """
+    print "\n"
+    print "Creating feature vectors for trainset..."
+    trainLabel, trainFeatureVectors = \
+        createFeatureVectors(trainFilename, trainDependencies)
+    print "Length of feature vector for trainset: %d" \
+          % len(trainFeatureVectors[0])
+    print "Feature vectors of trainset created."
 
-    exit(0)
-
-    """Create a feature vector of training set """
-    print "Creating Feature Vectors....."
-
-    encode = {'positive': 1.0, 'negative': 2.0, 'neutral': 3.0}
-    trainingLabel = []
-    trainfile = open(sys.argv[1], 'r')
-    featureVectorsTrain = []
-    index = 0
-    for i in trainfile:
-        if i:
-            i = i.split('\t')
-            text = i[1]
-            tweet = i[1].split()
-            token = i[2].split()
-            label = i[3].strip()
-            dependency = trainDependencies[index]
-            index += 1
-            if tweet:
-                trainingLabel.append(encode[label])
-                vector = []
-                # vector, polarityDictionary = findFeatures(tweet, token, polarityDictionary, stopWords, emoticonsDict,
-                #                                           acronymDict)
-                vector, words, hashtags, tweet = findFeatures1(tweet, token, stopWords, emoticonsDict,
-                                                          acronymDict, intensifiers)
-
-                #find context feature
-                S140ContextVector = findContextFeature(dependency, S140Unigram, emoticonsDict)
-                vector.extend(S140ContextVector)
-
-                NRCContextVector = findContextFeature(dependency, NRCUnigram, emoticonsDict)
-                vector.extend(NRCContextVector)
-
-                MPQAContextVector = findContextFeature1(dependency, MPQADict, intensifiers)
-                vector.extend(MPQAContextVector)
+    """Create feature vectors of testset """
+    print "Creating feature vectors for testset..."
+    testLabel, testFeatureVectors = \
+        createFeatureVectors(testFilename, testDependencies)
+    
+    print "Length of feature vector for testset: %d" \
+          % len(testFeatureVectors[0])
+    print "Feature vectors of testset created."
 
 
-                #find char and word gram feature
-                # chargramVector = findChargram(tweet, _3CharModel, _4CharModel, _5CharModel)
-                # vector = vector + chargramVector
-                #
-                # wordgramVector = findWordgram(tweet, uniModel, biModel, triModel, f4Model)
-                # vector = vector + wordgramVector
+    for i in range(len(testLabel)):
+        goldStandard.append(decode[testLabel[i]])
 
+    predictLabel = svmClassifier(
+        trainLabel, testLabel, trainFeatureVectors, testFeatureVectors)
 
-                # find lexicon for each capitalised word
-                # vector = findScore(capWords, vector)
-
-                # find hashtag score for each hashtag
-                vector = findScore(hashtags, vector)
-
-                # find lexicon score for each pos-tags
-                tags = ['N', 'V', 'R', 'O', 'A']
-                for pos in words:
-                    if pos in tags:
-                        vector = findScore(words[pos], vector)
-
-                #find score for each lexicon
-                S140Vector = findLexiconScore(tweet, S140Unigram, S140Bigram, S140Pairs)
-                vector.extend(S140Vector)
-
-                NRCVector = findLexiconScore(tweet, NRCUnigram, NRCBigram, NRCPairs)
-                vector.extend(NRCVector)
-
-                LiuBingVector = findManualLexiconScore(tweet, LiuBingDict)
-                vector.extend(LiuBingVector)
-
-                MPQAVector = findManualLexiconScore(tweet, MPQADict)
-                vector.extend(MPQAVector)
-
-                NRCEmotionVector = findManualLexiconScore(tweet, NRCEmotionDict)
-                vector.extend(NRCEmotionVector)
-
-                PosNegWordsVector = findManualLexiconScore(tweet, PosNegWords)
-                vector.extend(PosNegWordsVector)
-
-                AFINNVector = findAFINNScore(tweet, AFINNDict)
-                vector.extend(AFINNVector)
-
-                featureVectorsTrain.append(vector)
-    trainfile.close()
-    print "Length of vector: %d" % len(featureVectorsTrain[0])
-    print "Feature Vectors Train Created....."
-
-    """for each new tweet create a feature vector and feed it to above model to get label"""
-    testingLabel = []
-    data = []
-    data1 = []
-    testfile = open(sys.argv[2], 'r')
-    featureVectorsTest = []
-    index = 0
-    for i in testfile:
-        if i:
-            i = i.split('\t')
-            text = i[1]
-            tweet = i[1].split()
-            token = i[2].split()
-            label = i[3].strip()
-            dependency = testDependencies[index]
-            index += 1
-            if tweet:
-                data.append(label)
-                testingLabel.append(encode[label])
-                vector = []
-                # vector, polarityDictionary = findFeatures(tweet, token, polarityDictionary, stopWords, emoticonsDict,
-                #                                           acronymDict)
-                vector, words, hashtags, tweet = findFeatures1(tweet, token, stopWords, emoticonsDict,
-                                                          acronymDict, intensifiers)
-
-                #find context feature
-                S140ContextVector = findContextFeature(dependency, S140Unigram, emoticonsDict)
-                vector.extend(S140ContextVector)
-
-                NRCContextVector = findContextFeature(dependency, NRCUnigram, emoticonsDict)
-                vector.extend(NRCContextVector)
-
-                MPQAContextVector = findContextFeature1(dependency, MPQADict, intensifiers)
-                vector.extend(MPQAContextVector)
-
-                #find char and word gram feature
-                # chargramVector = findChargram(tweet, _3CharModel, _4CharModel, _5CharModel)
-                # vector = vector + chargramVector
-                #
-                # wordgramVector = findWordgram(tweet, uniModel, biModel, triModel, f4Model)
-                # vector = vector + wordgramVector
-
-
-                # find lexicon for each capitalised word
-                # vector = findScore(capWords, vector)
-
-                # find hashtag score for each hashtag
-                vector = findScore(hashtags, vector)
-
-                # find lexicon score for each pos-tags
-                tags = ['N', 'V', 'R', 'O', 'A']
-                for pos in words:
-                    if pos in tags:
-                        vector = findScore(words[pos], vector)
-
-                # find score for each lexicon
-                S140Vector = findLexiconScore(tweet, S140Unigram, S140Bigram, S140Pairs)
-                vector.extend(S140Vector)
-
-                NRCVector = findLexiconScore(tweet, NRCUnigram, NRCBigram, NRCPairs)
-                vector.extend(NRCVector)
-
-                LiuBingVector = findManualLexiconScore(tweet, LiuBingDict)
-                vector.extend(LiuBingVector)
-
-                MPQAVector = findManualLexiconScore(tweet, MPQADict)
-                vector.extend(MPQAVector)
-
-                NRCEmotionVector = findManualLexiconScore(tweet, NRCEmotionDict)
-                vector.extend(NRCEmotionVector)
-
-                PosNegWordsVector = findManualLexiconScore(tweet, PosNegWords)
-                vector.extend(PosNegWordsVector)
-
-                AFINNVector = findAFINNScore(tweet, AFINNDict)
-                vector.extend(AFINNVector)
-                # print len(vector)
-                featureVectorsTest.append(vector)
-    testfile.close()
-    print "Length of vector: %d" % len(featureVectorsTest[0])
-    print "Feature Vectors of test input created. Calculating Accuracy..."
-
-    predictedLabel = svmClassifier(trainingLabel, testingLabel, featureVectorsTrain, featureVectorsTest)
-
-    for i in range(len(predictedLabel)):
-        givenLabel = predictedLabel[i]
+    print predictLabel[1:10]
+    for i in range(len(predictLabel)):
+        givenLabel = predictLabel[i]
         label = encode.keys()[encode.values().index(givenLabel)]
-        data1.append(label)
+        predictResult.append(label)
 
     f = open('..//src//taskB.gs', 'w')
-    f.write('\n'.join(data))
+    f.write('\n'.join(goldStandard))
     f.close()
 
     f = open('..//src//taskB.pred', 'w')
-    f.write('\n'.join(data1))
+    f.write('\n'.join(predictResult))
     f.close()
-
-    #print len(featureVectorsTest)
-    #print len(testingLabel)
-    #print len(featureVectorsTrain)
-    #print len(trainingLabel)

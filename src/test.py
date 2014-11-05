@@ -57,7 +57,7 @@
 #     pospre = 0
 #     negpre = 0
 #     count = 0
-#     f = open('../dataset/final_test-gold-B_Input.txt', 'r')
+#     f = open('../dataset/SemEval2013_test.csv', 'r')
 #     for line in f:
 #         if line:
 #             index += 1

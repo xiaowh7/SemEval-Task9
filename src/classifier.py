@@ -4,7 +4,7 @@ def svmClassifier(trainingLabel,testingLabel,featureVectorsTrain,featureVectorsT
     
     """Feed the feature vector to svm to create model"""
     print "Creating SVM Model"
-    model = svm_train(trainingLabel, featureVectorsTrain, '-c 0.005 -h 0 -t 0')
+    model = svm_train(trainingLabel, featureVectorsTrain, '-c 0.001 -h 0 -t 0')
     print "Model created. Saving..."
 
     """Save model"""
