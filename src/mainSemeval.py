@@ -1,5 +1,8 @@
 __author__ = 'seven'
-from featureExtractor import *
+from ngramFeatureExtractor import *
+from lexiconFeatureExtractor import *
+from syntaxFeatureExtractor import *
+from contextFeatureExtractor import *
 from classifier import *
 from prepare import *
 from svmutil import *
@@ -15,7 +18,7 @@ def init(dataset):
         trainDepFilename = "../dataset/SemEval2013-Task2B/trainset/" \
                            "SemEval2013_train_dependency.txt"
         testDepFilename = "../dataset/SemEval2013-Task2B/testset/tweet/" \
-                       "SemEval2013_test_dependency.txt"
+                          "SemEval2013_test_dependency.txt"
     elif dataset == "Semeval-sms" or dataset == "SemEval2013-sms" or \
             dataset == "semeval-sms":
         trainFilename = "../dataset/SemEval2013-Task2B/trainset/" \
@@ -25,12 +28,12 @@ def init(dataset):
         trainDepFilename = "../dataset/SemEval2013-Task2B/trainset/" \
                            "SemEval2013_train_dependency.txt"
         testDepFilename = "../dataset/SemEval2013-Task2B/testset/sms/" \
-                       "SemEval2013-sms_test_dependency.txt"
+                          "SemEval2013-sms_test_dependency.txt"
     elif dataset == "debate08":
-        trainFilename = "../dataset/dabate08/debate08_train.csv"
-        testFilename = "../dataset/dabate08/debate08_test.csv"
-        trainDepFilename = "../dataset/dabate08/debate08_train_dependency.txt"
-        testDepFilename = "../dataset/dabate08/debate08_test_dependency.txt"
+        trainFilename = "../dataset/debate08/debate08_train.csv"
+        testFilename = "../dataset/debate08/debate08_test.csv"
+        trainDepFilename = "../dataset/debate08/debate08_train_dependency.txt"
+        testDepFilename = "../dataset/debate08/debate08_test_dependency.txt"
     elif dataset == "Apoorv":
         trainFilename = "../dataset/Apoorv/Apoorv_train.csv"
         testFilename = "../dataset/Apoorv/Apoorv_test.csv"
@@ -83,31 +86,34 @@ def createFeatureVectors(datafile, dependencies):
             label = content[3].strip()
             dependency = dependencies[index]
             index += 1
+
             if tweet:
                 labels.append(encode[label])
                 vector, words, hashtags, tweet = \
-                    findFeatures1(tweet, token, stopwords, emoticonsDict,
+                    findFeatures(tweet, token, stopwords, emoticonsDict,
                                   acronymDict, intensifiers)
 
                 # find context feature
-                S140ContextVector = findContextFeature(dependency, S140Unigram,
-                                                       emoticonsDict)
+                S140ContextVector = \
+                    findContextFeature(dependency, S140Unigram, emoticonsDict)
                 vector.extend(S140ContextVector)
 
-                NRCContextVector = findContextFeature(dependency, NRCUnigram,
-                                                      emoticonsDict)
+                NRCContextVector = \
+                    findContextFeature(dependency, NRCUnigram, emoticonsDict)
                 vector.extend(NRCContextVector)
 
-                MPQAContextVector = findContextFeature1(dependency, MPQADict,
-                                                        intensifiers)
+                MPQAContextVector = \
+                    findContextFeature1(dependency, MPQADict, intensifiers)
                 vector.extend(MPQAContextVector)
 
 
                 # find char and word gram feature
-                # chargramVector = findChargram(tweet, _3CharModel, _4CharModel, _5CharModel)
+                # chargramVector = \
+                #     findChargram(tweet, _3CharModel, _4CharModel, _5CharModel)
                 # vector = vector + chargramVector
                 #
-                # wordgramVector = findWordgram(tweet, uniModel, biModel, triModel, f4Model)
+                # wordgramVector = \
+                #     findWordgram(tweet, uniModel, biModel, triModel, f4Model)
                 # vector = vector + wordgramVector
 
 
@@ -124,12 +130,14 @@ def createFeatureVectors(datafile, dependencies):
                         vector = getScoreFeatureVector(words[pos], vector)
 
                 # find score for each lexicon
-                S140Vector = findLexiconScore(tweet, S140Unigram, S140Bigram,
-                                              S140Pairs)
+                S140Vector = \
+                    findAutomaticLexiconScore(
+                        tweet, S140Unigram, S140Bigram, S140Pairs)
                 vector.extend(S140Vector)
 
-                NRCVector = findLexiconScore(tweet, NRCUnigram, NRCBigram,
-                                             NRCPairs)
+                NRCVector = \
+                    findAutomaticLexiconScore(
+                        tweet, NRCUnigram, NRCBigram, NRCPairs)
                 vector.extend(NRCVector)
 
                 LiuBingVector = findManualLexiconScore(tweet, LiuBingDict)
@@ -138,11 +146,12 @@ def createFeatureVectors(datafile, dependencies):
                 MPQAVector = findManualLexiconScore(tweet, MPQADict)
                 vector.extend(MPQAVector)
 
-                NRCEmotionVector = findManualLexiconScore(tweet, NRCEmotionDict)
+                NRCEmotionVector = \
+                    findManualLexiconScore(tweet, NRCEmotionDict)
                 vector.extend(NRCEmotionVector)
 
-                PosNegWordsDictVector = findManualLexiconScore(tweet,
-                                                               PosNegWordsDict)
+                PosNegWordsDictVector = \
+                    findManualLexiconScore(tweet, PosNegWordsDict)
                 vector.extend(PosNegWordsDictVector)
 
                 AFINNVector = findAFINNScore(tweet, AFINNDict)
@@ -199,7 +208,7 @@ if __name__ == '__main__':
     print "Creating feature vectors for testset..."
     testLabel, testFeatureVectors = \
         createFeatureVectors(testFilename, testDependencies)
-    
+
     print "Length of feature vector for testset: %d" \
           % len(testFeatureVectors[0])
     print "Feature vectors of testset created."
@@ -211,11 +220,9 @@ if __name__ == '__main__':
     predictLabel = svmClassifier(
         trainLabel, testLabel, trainFeatureVectors, testFeatureVectors)
 
-    print predictLabel[1:10]
+    # print predictLabel[1:10]
     for i in range(len(predictLabel)):
-        givenLabel = predictLabel[i]
-        label = encode.keys()[encode.values().index(givenLabel)]
-        predictResult.append(label)
+        predictResult.append(decode[predictLabel[i]])
 
     f = open('..//src//taskB.gs', 'w')
     f.write('\n'.join(goldStandard))

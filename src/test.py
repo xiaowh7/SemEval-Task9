@@ -119,7 +119,7 @@ from getDependency import getDependency
 # for list in ans:
 #     print list[0]
 from prepare import *
-from featureExtractor import *
+from syntaxFeatureExtractor import *
 # acronymDict, stopWords, emoticonsDict = loadDictionary()
 # print emoticonsDict
 # exit(0)

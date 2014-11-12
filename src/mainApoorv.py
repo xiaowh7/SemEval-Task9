@@ -1,6 +1,6 @@
 __author__ = 'seven'
 """This src extracts the features and returns the features"""
-from featureExtractor import *
+from syntaxFeatureExtractor import *
 from classifier import *
 from prepare import *
 from svmutil import *

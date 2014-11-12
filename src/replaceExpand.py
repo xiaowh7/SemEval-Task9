@@ -11,8 +11,11 @@ listSpecialTag = ['#', 'U', '@', ',', 'E', '~', '$', 'G']
 
 
 def replaceHashtag(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after replacement 
-    #*** - > # """
+    """
+    takes as input a list which contains words in tweet and
+    return list of words in tweet after replacement
+    eg #*** - > #
+    """
     count = 0
     for i in range(len(tweet)):
         if token[i] == '#' or tweet[i].startswith('#'):
@@ -23,16 +26,22 @@ def replaceHashtag(tweet, token):
 
 
 def removeNonEnglishWords(tweet, token):
-    """remove the non-english or better non-ascii characters
-    takes as input a list of words in tweet and a list of corresponding tokens, 
+    """
+    remove the non-english or better non-ascii characters
+    takes as input a list of words in tweet and a list of corresponding tokens,
     not using tokens now but may use in future
-    and return the modified list of token and words"""
+    and return the modified list of token and words
+    """
 
     newTweet = []
     newToken = []
     for i in range(len(tweet)):
         if tweet[i] != '':
-            chk = re.match(r'([a-zA-z0-9 \+\?\.\*\^\$\(\)\[\]\{\}\|\\/:;\'\"><,.#@!~`%&-_=])+$', tweet[i])
+            chk = \
+                re.match(
+                    r'([a-zA-z0-9 \+\?\.\*\^\$\(\)\[\]\{\}\|\\/:;\'\"><,.#@!~`%&-_=])+$',
+                    tweet[i]
+                )
             if chk:
                 newTweet.append(tweet[i])
                 newToken.append(token[i])
@@ -40,9 +49,12 @@ def removeNonEnglishWords(tweet, token):
 
 
 def removeStopWords(tweet, token, stopWordsDict):
-    """remove the stop words ,
-    takes as input a list of words in tweet ,a list of corresponding tokens and a stopWords Dictonary, 
-    and return the modified list of token and words"""
+    """
+    remove the stop words ,
+    takes as input a list of words in tweet,
+    a list of corresponding tokens and a stopWords Dictonary,
+    and return the modified list of token and words
+    """
 
     newTweet = []
     newToken = []
@@ -54,9 +66,13 @@ def removeStopWords(tweet, token, stopWordsDict):
 
 
 def replaceEmoticons(emoticonsDict, tweet, token):
-    """replaces the emoticons present in tweet with its polarity
-    takes as input a emoticons dict which has emoticons as key and polarity as value
-    and a list which contains words in tweet and return list of words in tweet after replacement"""
+    """
+    replaces the emoticons present in tweet with its polarity
+    takes as input a emoticons dict
+    which has emoticons as key and polarity as value
+    and a list which contains words in tweet
+    and return list of words in tweet after replacement
+    """
 
     for i in range(len(tweet)):
         if tweet[i] in emoticonsDict:
@@ -66,9 +82,13 @@ def replaceEmoticons(emoticonsDict, tweet, token):
 
 
 def expandAcronym(acronymDict, tweet, token):
-    """expand the Acronym present in tweet 
-    takes as input a acronym dict which has acronym as key and abbreviation as value,
-    a list which contains words in tweet and a list of token and return list of words in tweet after expansion and tokens"""
+    """
+    expand the Acronym present in tweet
+    takes as input a acronym dict
+    which has acronym as key and abbreviation as value,
+    a list which contains words in tweet and a list of token
+    and return list of words in tweet after expansion and tokens
+    """
     newTweet = []
     newToken = []
     count = 0
@@ -89,15 +109,19 @@ def expandAcronym(acronymDict, tweet, token):
 
 
 def replaceRepetition(tweet):
-    """takes as input a list which contains words in tweet and return list of words in tweet after replacement and numner of repetion
-       eg coooooooool -> coool """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after replacement and numner of repetion
+    eg coooooooool -> coool
+    """
     count = 0
     for i in range(len(tweet)):
         x = list(tweet[i])
         if len(x) > 3:
             flag = 0
             for j in range(3, len(x)):
-                if x[j - 3].lower() == x[j - 2].lower() == x[j - 1].lower() == x[j].lower():
+                if x[j - 3].lower() == x[j - 2].lower() == \
+                        x[j - 1].lower() == x[j].lower():
                     x[j - 3] = ''
 
                     if flag == 0:
@@ -109,9 +133,12 @@ def replaceRepetition(tweet):
 
 
 def replaceNegation(tweet):
-    """takes as input a list which contains words in tweet and return list of words in tweet after replacement of "not","no","n't","~"
-       eg isn't -> negation 
-       not -> negation """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after replacement of "not","no","n't","~"
+    eg isn't -> negation
+    eg not -> negation
+    """
     count = 0
     for i in range(len(tweet)):
         word = tweet[i].lower().strip(specialChar)
@@ -122,8 +149,11 @@ def replaceNegation(tweet):
 
 
 def expandNegation(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after expanding of "n't" to "not"
-       eg isn't -> is not """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after expanding of "n't" to "not"
+    eg isn't -> is not
+    """
 
     newTweet = []
     newToken = []
@@ -144,8 +174,11 @@ def expandNegation(tweet, token):
 
 
 def removeTarget(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after replacement 
-    @**** -> @ """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after replacement
+    eg @**** -> @
+    """
     newToken = []
     newTweet = []
     countTarget = 0
@@ -160,8 +193,11 @@ def removeTarget(tweet, token):
 
 
 def removeUrl(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after replacement 
-    www.*.* ->'URL' """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after replacement
+    eg www.*.* ->'URL'
+    """
     newToken = []
     newTweet = []
     countURL = 0
@@ -175,8 +211,10 @@ def removeUrl(tweet, token):
 
 
 def removeNumbers(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after removing 
-    numbers """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after removing numbers
+    """
     newToken = []
     newTweet = []
     for i in range(len(tweet)):
@@ -187,8 +225,10 @@ def removeNumbers(tweet, token):
 
 
 def removeProperCommonNoun(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after removing 
-    common nouns """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after removing common nouns
+    """
     count = {'^': 0, 'Z': 0}
     newToken = []
     newTweet = []
@@ -203,8 +243,10 @@ def removeProperCommonNoun(tweet, token):
     # return tweet, token, [count['^'], count['Z']]
 
 def removePreposition(tweet, token):
-    """takes as input a list which contains words in tweet and return list of words in tweet after removing 
-    numbers """
+    """
+    takes as input a list which contains words in tweet
+    and return list of words in tweet after removing numbers
+    """
     newToken = []
     newTweet = []
     countPreposition = 0
