@@ -9,25 +9,29 @@ from svmutil import *
 
 
 def init(dataset):
-    if dataset == "Semeval" or dataset == "SemEval2013" or \
-            dataset == "semeval":
-        trainFilename = "../dataset/SemEval2013-Task2B/trainset/" \
-                        "SemEval2013_train.csv"
-        testFilename = "../dataset/SemEval2013-Task2B/testset/tweet/" \
+    if dataset == "Semeval2014" or dataset == "SemEval2014" or \
+            dataset == "semeval2014" or dataset == "semeval":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2014-Task9/" \
+                       "SemEval2014_test.csv"
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2014-Task9/" \
+                          "SemEval2014_test_dependency.txt"
+    elif dataset == "Semeval2013" or dataset == "SemEval2013" or \
+            dataset == "semeval2013":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2013-Task2B/tweet/" \
                        "SemEval2013_test.csv"
-        trainDepFilename = "../dataset/SemEval2013-Task2B/trainset/" \
-                           "SemEval2013_train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2013-Task2B/testset/tweet/" \
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2013-Task2B/tweet/" \
                           "SemEval2013_test_dependency.txt"
     elif dataset == "Semeval-sms" or dataset == "SemEval2013-sms" or \
             dataset == "semeval-sms":
-        trainFilename = "../dataset/SemEval2013-Task2B/trainset/" \
-                        "SemEval2013_train.csv"
-        testFilename = "../dataset/SemEval2013-Task2B/testset/sms/" \
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2013-Task2B/ sms/" \
                        "SemEval2013-sms_test.csv"
-        trainDepFilename = "../dataset/SemEval2013-Task2B/trainset/" \
-                           "SemEval2013_train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2013-Task2B/testset/sms/" \
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2013-Task2B/sms/" \
                           "SemEval2013-sms_test_dependency.txt"
     elif dataset == "debate08":
         trainFilename = "../dataset/debate08/debate08_train.csv"
