@@ -15,10 +15,11 @@ def combine():
         print "Usage :: python combine.py " \
               "./SemEval2014-task9-test-B-gold_reformated " \
               "./tweetsTagged.txt " \
-              "./trainingInput.txt"
+              "./SemEval2014_test.csv"
         sys.exit(0)
 
     """Parallely combine both the files"""
+    print ("Combine and create SemEval2014_test.csv")
     data = []
     infile1 = open(sys.argv[1], 'r')
     infile2 = open(sys.argv[2], 'r')

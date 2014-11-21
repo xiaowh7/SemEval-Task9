@@ -9,6 +9,7 @@ def reformat():
               "InputFileName ReformatFileName OutputFileName"
         sys.exit(0)
 
+    print ("Reformatting...")
     infile = open(sys.argv[1], 'r')
     outfile = open(sys.argv[2], 'w')
 
@@ -24,6 +25,7 @@ def reformat():
 def extractContent():
     p = re.compile("\\t(neutral|positive|negative)\\t.*$")
 
+    print ("Extracting tweets...")
     infile = open(sys.argv[2], 'r')
     outfile = open(sys.argv[3], 'w')
 
