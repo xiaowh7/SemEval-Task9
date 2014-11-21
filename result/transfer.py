@@ -22,9 +22,9 @@
 #     print map(lambda (k, v): (frozenset(reduce( lambda x, y: x+y, [[i] if i not in acronymDict else acronymDict[i][0] for i in k.split()])), int(v)), [line.split('\t') for line in open("..//src//AFINN-111.txt")])
 
 import csv
-predfile = open('taskB.pred', 'r')
-testfile = open('../dataset/test-gold-B.csv', 'r')
-outfile = open('ans.txt', 'w')
+predfile = open('../src/taskB.pred', 'r')
+testfile = open('../dataset/SemEval2013-Task2B/tweet/test-gold-B.csv', 'r')
+outfile = open('SemEval2013_ans.txt', 'w')
 # testfile = open('../dataset/sms-test-gold-B.csv', 'r')
 # outfile = open('ans_sms.txt', 'w')
 # testfile = open('../debate08/test_without_neutral.csv', 'r')
