@@ -5,6 +5,7 @@ from syntaxFeatureExtractor import *
 from contextFeatureExtractor import *
 from classifier import *
 from prepare import *
+from output import *
 from svmutil import *
 
 
@@ -17,22 +18,28 @@ def init(dataset):
         trainDepFilename = "../dataset/trainset/train_dependency.txt"
         testDepFilename = "../dataset/SemEval2014-Task9/" \
                           "SemEval2014_test_dependency.txt"
-    elif dataset == "Semeval2013" or dataset == "SemEval2013" or \
-                    dataset == "semeval2013":
+        goldFilename = "..//SemEval2014-task9-scoring-script//" \
+                           "SemEval2014-task9-test-B-gold.txt"
+    elif dataset == "Twitter-2013" or dataset == "twitter-2013" or \
+                    dataset == "twitter2013":
         trainFilename = "../dataset/trainset/train.csv"
-        testFilename = "../dataset/SemEval2013-Task2B/tweet/" \
-                       "SemEval2013_test.csv"
+        testFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+                       "Twitter-2013_test.csv"
         trainDepFilename = "../dataset/trainset/train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2013-Task2B/tweet/" \
-                          "SemEval2013_test_dependency.txt"
-    elif dataset == "Semeval-sms" or dataset == "SemEval2013-sms" or \
-                    dataset == "semeval-sms":
+        testDepFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+                          "Twitter-2013_dependency.txt"
+        goldFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+                           "Twitter-2013_gold.csv"
+    elif dataset == "Twitter-2014" or dataset == "twitter-2014" or \
+                    dataset == "twitter2014":
         trainFilename = "../dataset/trainset/train.csv"
-        testFilename = "../dataset/SemEval2013-Task2B/sms/" \
-                       "SemEval2013-sms_test.csv"
+        testFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
+                       "Twitter-2014_test.csv"
         trainDepFilename = "../dataset/trainset/train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2013-Task2B/sms/" \
-                          "SemEval2013-sms_test_dependency.txt"
+        testDepFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
+                          "Twitter-2014_dependency.txt"
+        goldFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
+                           "Twitter-2014_gold.csv"
     elif dataset == "debate08":
         trainFilename = "../dataset/debate08/debate08_train.csv"
         testFilename = "../dataset/debate08/debate08_test.csv"
@@ -43,17 +50,11 @@ def init(dataset):
         testFilename = "../dataset/Apoorv/Apoorv_test.csv"
         trainDepFilename = "../dataset/Apoorv/Apoorv_train_dependency.txt"
         testDepFilename = "../dataset/Apoorv/Apoorv_test_dependency.txt"
-    elif dataset == "other":
-        trainFilename = "../dataset/trainset/train.csv"
-        testFilename = "../dataset/SemEval2014-Task9/SMS-2013/" \
-                       "SMS-2013_test.csv"
-        trainDepFilename = "../dataset/trainset/train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2014-Task9/SMS-2013/" \
-                          "SMS-2013_dependency.txt"
     else:
         exit("Error: Wrong dataset\nPlease specify a valid dataset.")
 
-    return trainFilename, testFilename, trainDepFilename, testDepFilename
+    return trainFilename, testFilename, \
+           trainDepFilename, testDepFilename, goldFilename
 
 
 def getScoreFeatureVector(words, vector):
@@ -173,23 +174,6 @@ def createFeatureVectors(datafile, dependencies):
     return labels, featureVectors
 
 
-def output(dataset, predictLabel):
-    goldFilename = "..//SemEval2014-task9-scoring-script//" \
-                   "SemEval2014-task9-test-B-gold.txt"
-    predFilename = "../result//%s.pred" % dataset
-    goldFile = open(goldFilename, 'r')
-    predFile = open(predFilename, 'w')
-
-    index = 0
-    for line in goldFile:
-        data = line.strip("\r\n").split("\t")
-        predFile.write("%s\t%d\t%s\n" % (data[0], index+1, predictLabel[index]))
-        index += 1
-
-    goldFile.close()
-    predFile.close()
-
-
 if __name__ == '__main__':
 
     """check arguments"""
@@ -200,10 +184,11 @@ if __name__ == '__main__':
         dataset = sys.argv[1]
         encode = {'positive': 1.0, 'negative': 2.0, 'neutral': 3.0}
         decode = {1.0: 'positive', 2.0: 'negative', 3.0: 'neutral'}
-        trainFilename, testFilename, trainDepFilename, testDepFilename = \
+        trainFilename, testFilename, \
+            trainDepFilename, testDepFilename, goldFilename = \
             init(dataset)
         goldStandard = []
-        predictResult = []
+        predictLabel = []
         # unigramModel, bigramModel, trigramModel, _4gramModel, \
         # _3ChargramModel, _4ChargramModel, _5ChargramModel = \
         # loadNgram(dataset)
@@ -244,14 +229,22 @@ if __name__ == '__main__':
     for i in range(len(testLabel)):
         goldStandard.append(decode[testLabel[i]])
 
-    predictLabel = svmClassifier(
+    encodePredictLabel = svmClassifier(
         trainLabel, testLabel, trainFeatureVectors, testFeatureVectors)
 
     # print predictLabel[1:10]
-    for i in range(len(predictLabel)):
-        predictResult.append(decode[predictLabel[i]])
+    for i in range(len(encodePredictLabel)):
+        predictLabel.append(decode[encodePredictLabel[i]])
 
-    output(dataset, predictResult)
-    # f = open('..//src//taskB.pred', 'w')
-    # f.write('\n'.join(predictResult))
-    # f.close()
+    f = open('..//src//taskB.pred', 'w')
+    f.write('\n'.join(predictLabel))
+    f.close()
+
+    if dataset.startswith("Twitter"):
+        predFilename = "../dataset/SemEval2014-Task9/%s/%s_pred.csv" \
+                       % (dataset, dataset)
+        Semeval2013Output(predictLabel, goldFilename, predFilename)
+    else:
+        predFilename = "../result/%s.pred" % dataset
+        Semeval2014Output(predictLabel, goldFilename, predFilename)
+

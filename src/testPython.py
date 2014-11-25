@@ -35,17 +35,16 @@ __author__ = 'seven'
 #     predFile.close()
 #
 #
-# predictLable = []
-# f = open("taskB.pred", 'r')
-# for line in f:
-#     predictLable.append(line.strip("\r\n"))
-# output("Semeval", predictLable)
-dirList = ["Twitter-2013", "SMS-2013", "Twitter-2014",
-           "Twitter-2014-sracasm", "LiveJournal-2014"]
 
-# exit(0)
-dic = dict(list())
-tuplelist = ("hha", "dd")
-dic["1"] = list(tuplelist)
-dic["1"].append("haha")
-print dic["1"]
+# output("Semeval", predictLable)
+from output import *
+dataset = "Twitter-2013"
+predFilename = "../dataset/SemEval2014-Task9/%s/%s_pred.csv" \
+               % (dataset, dataset)
+goldFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+               "Twitter-2013_gold.csv"
+predictLabel = []
+f = open("taskB.pred", 'r')
+for line in f:
+    predictLabel.append(line.strip("\r\n"))
+Semeval2013Output(predictLabel, goldFilename, predFilename)

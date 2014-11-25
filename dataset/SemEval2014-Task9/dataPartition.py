@@ -40,7 +40,6 @@ if __name__ == '__main__':
                    "Twitter-2014": "T14", "Twitter-2014-sracasm": "TS",
                    "LiveJournal-2014": "LJ"}
 
-
     for dirName in dirAbbrDict.keys():
         mkdir(dirName)
         outputGoldFilename = "%s//%s_gold.csv" % (dirName, dirName)
@@ -57,7 +56,9 @@ if __name__ == '__main__':
 
             data = reformattedLine.strip("\r\n").split("\t")
             source = data[1]
-            if source.startswith(dirAbbrDict[dirName]):
+            content = data[3]
+            if source.startswith(dirAbbrDict[dirName]) and \
+                    not content == "Not Available":
                 outputGoldFile.write(reformattedLine)
                 outputTestFile.write(testLine)
                 outputDepFile.write(dependencyLine)
