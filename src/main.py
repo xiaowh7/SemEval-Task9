@@ -43,6 +43,13 @@ def init(dataset):
         testFilename = "../dataset/Apoorv/Apoorv_test.csv"
         trainDepFilename = "../dataset/Apoorv/Apoorv_train_dependency.txt"
         testDepFilename = "../dataset/Apoorv/Apoorv_test_dependency.txt"
+    elif dataset == "other":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2014-Task9/SMS-2013/" \
+                       "SMS-2013_test.csv"
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2014-Task9/SMS-2013/" \
+                          "SMS-2013_dependency.txt"
     else:
         exit("Error: Wrong dataset\nPlease specify a valid dataset.")
 
@@ -244,7 +251,7 @@ if __name__ == '__main__':
     for i in range(len(predictLabel)):
         predictResult.append(decode[predictLabel[i]])
 
-    # output(dataset, predictResult)
-    f = open('..//src//taskB.pred', 'w')
-    f.write('\n'.join(predictResult))
-    f.close()
+    output(dataset, predictResult)
+    # f = open('..//src//taskB.pred', 'w')
+    # f.write('\n'.join(predictResult))
+    # f.close()

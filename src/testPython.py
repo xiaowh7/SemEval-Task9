@@ -18,25 +18,34 @@ __author__ = 'seven'
 # print type(a)
 # print a
 # print a[0], a[1], a[1]
-def output(dataset, predictLabel):
-    goldFilename = "..//SemEval2014-task9-scoring-script//" \
-                   "SemEval2014-task9-test-B-gold.txt"
-    predFilename = "../result//%s.pred" % dataset
-    goldFile = open(goldFilename, 'r')
-    predFile = open(predFilename, 'w')
+# def output(dataset, predictLabel):
+#     goldFilename = "..//SemEval2014-task9-scoring-script//" \
+#                    "SemEval2014-task9-test-B-gold.txt"
+#     predFilename = "../result//%s.pred" % dataset
+#     goldFile = open(goldFilename, 'r')
+#     predFile = open(predFilename, 'w')
+#
+#     index = 0
+#     for line in goldFile:
+#         data = line.strip("\r\n").split("\t")
+#         predFile.write("%s\t%d\t%s\n" % (data[0], index+1, predictLabel[index]))
+#         index += 1
+#
+#     goldFile.close()
+#     predFile.close()
+#
+#
+# predictLable = []
+# f = open("taskB.pred", 'r')
+# for line in f:
+#     predictLable.append(line.strip("\r\n"))
+# output("Semeval", predictLable)
+dirList = ["Twitter-2013", "SMS-2013", "Twitter-2014",
+           "Twitter-2014-sracasm", "LiveJournal-2014"]
 
-    index = 0
-    for line in goldFile:
-        data = line.strip("\r\n").split("\t")
-        predFile.write("%s\t%d\t%s\n" % (data[0], index+1, predictLabel[index]))
-        index += 1
-
-    goldFile.close()
-    predFile.close()
-
-
-predictLable = []
-f = open("taskB.pred", 'r')
-for line in f:
-    predictLable.append(line.strip("\r\n"))
-output("Semeval", predictLable)
+# exit(0)
+dic = dict(list())
+tuplelist = ("hha", "dd")
+dic["1"] = list(tuplelist)
+dic["1"].append("haha")
+print dic["1"]

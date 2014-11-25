@@ -1,3 +1,5 @@
+from itertools import izip
+
 __author__ = 'seven'
 import sys
 import re
@@ -10,16 +12,20 @@ def reformat():
         sys.exit(0)
 
     print ("Reformatting...")
+    originFilename = "SemEval2014-Task9-subtaskAB-test-to-download/" \
+                     "SemEval2014-task9-test-B-gold-NEED-TWEET-DOWNLOAD.txt"
+    originFile = open(originFilename, 'r')
+
     infile = open(sys.argv[1], 'r')
     outfile = open(sys.argv[2], 'w')
 
-    for line in infile:
-        source = line.split('\t')[1]
-        if source.startswith("SM") or source.startswith("LJ"):
-            if line.endswith("\tNot Available\n"):
-                line = line.replace("\tNot Available", "")
 
-        outfile.write("%s" % line)
+    for line1, line2 in izip(infile, originFile):
+        source = line1.split('\t')[1]
+        if source.startswith("T13") or source.startswith("T14"):
+            outfile.write("%s" % line1)
+        else:
+            outfile.write("%s" % line2)
 
 
 def extractContent():

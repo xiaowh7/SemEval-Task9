@@ -4,7 +4,7 @@ gold = []
 for line in goldFile.readlines():
     gold.append(line.strip('\r\n').split('\t'))
 
-predfile = open("./ans.txt", 'r')
+predfile = open("./Semeval-sms_ans.txt", 'r')
 pred = []
 for line in predfile.readlines():
     pred.append(line.strip('\r\n').split('\t'))
