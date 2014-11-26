@@ -9,6 +9,19 @@ from output import *
 from svmutil import *
 
 
+def checkArguments():
+    modelFilename = sys.argv[1]
+    dataset = sys.argv[2]
+    if len(sys.argv) == 4:
+        addTrainset = sys.argv[3]
+    else:
+        addTrainset = ""
+
+    # print "dataset: %s\naddTrainset: %s\nmodelFilename: %s" % \
+    #       (dataset, addTrainset, modelFilename)
+    return dataset, addTrainset, modelFilename
+
+
 def init(dataset):
     if dataset == "Semeval2014" or dataset == "SemEval2014" or \
                     dataset == "semeval2014" or dataset == "semeval":
@@ -56,6 +69,18 @@ def init(dataset):
     return trainFilename, testFilename, \
            trainDepFilename, testDepFilename, goldFilename
 
+
+def initAdditionalTrainset(addTrainset):
+    if addTrainset == "SentiStrength":
+        addTrainsetFilename = \
+            "../dataset/SentiStrength/SentiStrength_3class_train.csv"
+        addTrainsetDepFilename = \
+            "../dataset/SentiStrength/SentiStrength_3class_dependency.txt"
+    else:
+        exit("Error: Wrong additional trainset\n"
+             "Please specify a valid additional trainset.")
+
+    return addTrainsetFilename, addTrainsetDepFilename
 
 def getScoreFeatureVector(words, vector):
     # find lexicon score for each word
@@ -174,14 +199,28 @@ def createFeatureVectors(datafile, dependencies):
     return labels, featureVectors
 
 
+def combineAdditionalTrainset(addTrainset, trainLabel, trainFeatureVectors):
+    addTrainsetFilename, addTrainsetDepFilename = \
+        initAdditionalTrainset(addTrainset)
+    addTrainDependencies = getDependency(addTrainsetDepFilename)
+    addTrainLabel, addTrainFeatureVectors = \
+        createFeatureVectors(addTrainsetFilename, addTrainDependencies)
+    for index in xrange(len(addTrainLabel)):
+        trainLabel.append(addTrainLabel[index])
+        trainFeatureVectors.append(addTrainFeatureVectors[index])
+
+    return trainLabel, trainFeatureVectors
+
+
 if __name__ == '__main__':
 
     """check arguments"""
-    if len(sys.argv) != 2:
-        print "Usage :: python main.py SemEval2014"
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
+        print "Usage :: python main.py model dataset additionalTrainset "
         sys.exit("Error: wrong arguments")
     else:
-        dataset = sys.argv[1]
+        dataset, addTrainset, modelFilename = checkArguments()
+        exit(0)
         encode = {'positive': 1.0, 'negative': 2.0, 'neutral': 3.0}
         decode = {1.0: 'positive', 2.0: 'negative', 3.0: 'neutral'}
         trainFilename, testFilename, \
@@ -215,6 +254,12 @@ if __name__ == '__main__':
         createFeatureVectors(trainFilename, trainDependencies)
     print "Length of feature vector for trainset: %d" \
           % len(trainFeatureVectors[0])
+
+    if not addTrainset == "":
+        trainLabel, trainFeatureVectors = \
+            combineAdditionalTrainset(
+                addTrainset, trainLabel, trainFeatureVectors)
+
     print "Feature vectors of trainset created."
 
     """Create feature vectors of testset """
@@ -240,9 +285,11 @@ if __name__ == '__main__':
     f.write('\n'.join(predictLabel))
     f.close()
 
-    if dataset.startswith("Twitter"):
-        predFilename = "../dataset/SemEval2014-Task9/%s/%s_pred.csv" \
-                       % (dataset, dataset)
+    if dataset.startswith("Twitter") or dataset.startswith("twitter"):
+        year = re.findall(r'\d+', dataset)[0]
+        predFilename = \
+                "../dataset/SemEval2014-Task9/Twitter-%s/%s_pred.csv" \
+                % (year, dataset)
         Semeval2013Output(predictLabel, goldFilename, predFilename)
     else:
         predFilename = "../result/%s.pred" % dataset

@@ -4,7 +4,7 @@ __author__ = 'seven'
 # data1 = []
 # encode = {'positive': 1.0, 'negative': 2.0, 'neutral': 3.0}
 # for i in range(len(testlabel)):
-#     givenLabel = testlabel[i]
+# givenLabel = testlabel[i]
 #     label = decode[givenLabel]
 #     data1.append(label)
 # print data1
@@ -37,14 +37,19 @@ __author__ = 'seven'
 #
 
 # output("Semeval", predictLable)
-from output import *
-dataset = "Twitter-2013"
-predFilename = "../dataset/SemEval2014-Task9/%s/%s_pred.csv" \
-               % (dataset, dataset)
-goldFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
-               "Twitter-2013_gold.csv"
-predictLabel = []
-f = open("taskB.pred", 'r')
-for line in f:
-    predictLabel.append(line.strip("\r\n"))
-Semeval2013Output(predictLabel, goldFilename, predFilename)
+# from output import *
+# dataset = "Twitter-2013"
+# predFilename = "../dataset/SemEval2014-Task9/%s/%s_pred.csv" \
+#                % (dataset, dataset)
+# goldFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+#                "Twitter-2013_gold.csv"
+# predictLabel = []
+# f = open("taskB.pred", 'r')
+# for line in f:
+#     predictLabel.append(line.strip("\r\n"))
+# Semeval2013Output(predictLabel, goldFilename, predFilename)
+# import re
+# ans = re.findall(r'\d+', 'Twitter-2013')
+# print ans
+ans = raw_input("train required? (y/n):")
+print ans
