@@ -1,5 +1,5 @@
 __author__ = 'seven'
-goldFile = open("../dataset/test-gold-B.csv", 'r')
+goldFile = open("../dataset/Semeval2013_gold.csv", 'r')
 gold = []
 for line in goldFile.readlines():
     gold.append(line.strip('\r\n').split('\t'))

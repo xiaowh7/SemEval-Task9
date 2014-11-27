@@ -102,7 +102,7 @@ def testNRCCanadaLexicon(src, goldFilename):
 
 
 if __name__ == '__main__':
-    goldFilename = '../dataset/SemEval2013_test.csv'
+    goldFilename = '../dataset/Semeval2013_test.csv'
     testNRCCanadaLexicon("NRC-Hashtag", goldFilename)
     testNRCCanadaLexicon("Sentiment140", goldFilename)
     testLiuBingLexicon(goldFilename)

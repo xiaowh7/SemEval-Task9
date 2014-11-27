@@ -1,5 +1,5 @@
 __author__ = 'seven'
-inFile = open('full.csv', 'r')
+inFile = open('raw.csv', 'r')
 count = 0
 poscnt = 0
 negcnt = 0

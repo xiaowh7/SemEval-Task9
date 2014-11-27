@@ -5,7 +5,7 @@ import langdetector
 def preprocess():
 
     infile = open('fullDataUsedForPaper.txt', 'r')
-    outfile = open('full.csv', 'w')
+    outfile = open('raw.csv', 'w')
     # outfile1 = open('tweets.csv', 'w')
     isFirst = True
     for line in infile.readlines():

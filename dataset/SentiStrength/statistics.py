@@ -1,11 +1,11 @@
 __author__ = 'seven'
-infile = open('SentiStrength_3class_train.csv', 'r')
+infile = open('SentiStrength_train_full.csv', 'r')
 poscnt = 0
 negcnt = 0
 neucnt = 0
 count = 0
 threshold = 9000
-outfile = open('SentiStrength_2class_train.csv', 'w')
+outfile = open('SentiStrength_train.csv', 'w')
 for line in infile.readlines():
     data = line.strip('\n').split('\t')
     sentiment = data[3]

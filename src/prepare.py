@@ -2,6 +2,82 @@ from replaceExpand import *
 from collections import defaultdict
 
 
+def init(dataset):
+    if dataset == "Semeval2014" or dataset == "SemEval2014" or \
+                    dataset == "semeval2014" or dataset == "semeval":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2014-Task9/" \
+                       "SemEval2014_test.csv"
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2014-Task9/" \
+                          "SemEval2014_test_dependency.txt"
+        goldFilename = "..//SemEval2014-task9-scoring-script//" \
+                           "SemEval2014-task9-test-B-gold.txt"
+    elif dataset == "Semeval2013" or dataset == "SemEval2013" or \
+                    dataset == "semeval2013":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2013-Task2B/tweet/" \
+                       "Semeval2013_test.csv"
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2013-Task2B/tweet/" \
+                          "Semeval2013_test_dependency.txt"
+        goldFilename = "../dataset/SemEval2013-Task2B/tweet/" \
+                       "Semeval2013_gold.csv"
+    elif dataset == "Twitter-2013" or dataset == "twitter-2013" or \
+                    dataset == "twitter2013":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+                       "Twitter-2013_test.csv"
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+                          "Twitter-2013_dependency.txt"
+        goldFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
+                           "Twitter-2013_gold.csv"
+    elif dataset == "Twitter-2014" or dataset == "twitter-2014" or \
+                    dataset == "twitter2014":
+        trainFilename = "../dataset/trainset/train.csv"
+        testFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
+                       "Twitter-2014_test.csv"
+        trainDepFilename = "../dataset/trainset/train_dependency.txt"
+        testDepFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
+                          "Twitter-2014_dependency.txt"
+        goldFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
+                           "Twitter-2014_gold.csv"
+    elif dataset == "debate08":
+        trainFilename = "../dataset/debate08/debate08_train.csv"
+        testFilename = "../dataset/debate08/debate08_test.csv"
+        trainDepFilename = "../dataset/debate08/debate08_train_dependency.txt"
+        testDepFilename = "../dataset/debate08/debate08_test_dependency.txt"
+    elif dataset == "Apoorv":
+        trainFilename = "../dataset/Apoorv/Apoorv_train.csv"
+        testFilename = "../dataset/Apoorv/Apoorv_test.csv"
+        trainDepFilename = "../dataset/Apoorv/Apoorv_train_dependency.txt"
+        testDepFilename = "../dataset/Apoorv/Apoorv_test_dependency.txt"
+    else:
+        exit("Error: Wrong dataset\nPlease specify a valid dataset.")
+
+    return trainFilename, testFilename, \
+           trainDepFilename, testDepFilename, goldFilename
+
+
+def initAdditionalTrainset(addTrainset):
+    if addTrainset == "SentiStrength":
+        addTrainsetFilename = \
+            "../dataset/SentiStrength/SentiStrength_train.csv"
+        addTrainsetDepFilename = \
+            "../dataset/SentiStrength/SentiStrength_dependency.txt"
+    elif addTrainset == "sanders":
+        addTrainsetFilename = \
+            "../dataset/sanders-twitter-0.2/sanders_train.csv"
+        addTrainsetDepFilename = \
+            "../dataset/sanders-twitter-0.2/sanders_dependency.txt"
+    else:
+        exit("Error: Wrong additional trainset\n"
+             "Please specify a valid additional trainset.")
+
+    return addTrainsetFilename, addTrainsetDepFilename
+
+
 def loadDictionary():
     """
     Load dictionaries
@@ -331,9 +407,9 @@ def getDependency(filename):
     return dependencies
 
 
-def loadDependency(trainDepFilename, testDepFilename):
-    print "Loading trainset dependencies..."
-    trainDependicies = getDependency(trainDepFilename)
-    print "Loading testset dependencies..."
-    testDependicies = getDependency(testDepFilename)
-    return trainDependicies, testDependicies
+# def loadDependency(trainDepFilename, testDepFilename):
+#     print "Loading trainset dependencies..."
+#     trainDependicies = getDependency(trainDepFilename)
+#     print "Loading testset dependencies..."
+#     testDependicies = getDependency(testDepFilename)
+#     return trainDependicies, testDependicies

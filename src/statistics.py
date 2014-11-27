@@ -1,5 +1,5 @@
 __author__ = 'seven'
-smsFilename = "..//dataset//SemEval2013-Task2B//sms//sms-test-gold-B.csv"
+smsFilename = "..//dataset//SemEval2013-Task2B//sms//sms-Semeval2013_gold.csv"
 file = open(smsFilename, 'r')
 sms = {}
 for line in file:

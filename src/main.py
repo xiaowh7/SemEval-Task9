@@ -12,75 +12,15 @@ from svmutil import *
 def checkArguments():
     modelFilename = sys.argv[1]
     dataset = sys.argv[2]
-    if len(sys.argv) == 4:
-        addTrainset = sys.argv[3]
-    else:
-        addTrainset = ""
+    addTrainsetList = []
+    if len(sys.argv) >= 4:
+        for index in xrange(3, len(sys.argv)):
+            addTrainsetList.append(sys.argv[index])
 
     # print "dataset: %s\naddTrainset: %s\nmodelFilename: %s" % \
     #       (dataset, addTrainset, modelFilename)
-    return dataset, addTrainset, modelFilename
+    return dataset, addTrainsetList, modelFilename
 
-
-def init(dataset):
-    if dataset == "Semeval2014" or dataset == "SemEval2014" or \
-                    dataset == "semeval2014" or dataset == "semeval":
-        trainFilename = "../dataset/trainset/train.csv"
-        testFilename = "../dataset/SemEval2014-Task9/" \
-                       "SemEval2014_test.csv"
-        trainDepFilename = "../dataset/trainset/train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2014-Task9/" \
-                          "SemEval2014_test_dependency.txt"
-        goldFilename = "..//SemEval2014-task9-scoring-script//" \
-                           "SemEval2014-task9-test-B-gold.txt"
-    elif dataset == "Twitter-2013" or dataset == "twitter-2013" or \
-                    dataset == "twitter2013":
-        trainFilename = "../dataset/trainset/train.csv"
-        testFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
-                       "Twitter-2013_test.csv"
-        trainDepFilename = "../dataset/trainset/train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
-                          "Twitter-2013_dependency.txt"
-        goldFilename = "../dataset/SemEval2014-Task9/Twitter-2013/" \
-                           "Twitter-2013_gold.csv"
-    elif dataset == "Twitter-2014" or dataset == "twitter-2014" or \
-                    dataset == "twitter2014":
-        trainFilename = "../dataset/trainset/train.csv"
-        testFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
-                       "Twitter-2014_test.csv"
-        trainDepFilename = "../dataset/trainset/train_dependency.txt"
-        testDepFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
-                          "Twitter-2014_dependency.txt"
-        goldFilename = "../dataset/SemEval2014-Task9/Twitter-2014/" \
-                           "Twitter-2014_gold.csv"
-    elif dataset == "debate08":
-        trainFilename = "../dataset/debate08/debate08_train.csv"
-        testFilename = "../dataset/debate08/debate08_test.csv"
-        trainDepFilename = "../dataset/debate08/debate08_train_dependency.txt"
-        testDepFilename = "../dataset/debate08/debate08_test_dependency.txt"
-    elif dataset == "Apoorv":
-        trainFilename = "../dataset/Apoorv/Apoorv_train.csv"
-        testFilename = "../dataset/Apoorv/Apoorv_test.csv"
-        trainDepFilename = "../dataset/Apoorv/Apoorv_train_dependency.txt"
-        testDepFilename = "../dataset/Apoorv/Apoorv_test_dependency.txt"
-    else:
-        exit("Error: Wrong dataset\nPlease specify a valid dataset.")
-
-    return trainFilename, testFilename, \
-           trainDepFilename, testDepFilename, goldFilename
-
-
-def initAdditionalTrainset(addTrainset):
-    if addTrainset == "SentiStrength":
-        addTrainsetFilename = \
-            "../dataset/SentiStrength/SentiStrength_3class_train.csv"
-        addTrainsetDepFilename = \
-            "../dataset/SentiStrength/SentiStrength_3class_dependency.txt"
-    else:
-        exit("Error: Wrong additional trainset\n"
-             "Please specify a valid additional trainset.")
-
-    return addTrainsetFilename, addTrainsetDepFilename
 
 def getScoreFeatureVector(words, vector):
     # find lexicon score for each word
@@ -199,28 +139,47 @@ def createFeatureVectors(datafile, dependencies):
     return labels, featureVectors
 
 
-def combineAdditionalTrainset(addTrainset, trainLabel, trainFeatureVectors):
-    addTrainsetFilename, addTrainsetDepFilename = \
-        initAdditionalTrainset(addTrainset)
-    addTrainDependencies = getDependency(addTrainsetDepFilename)
-    addTrainLabel, addTrainFeatureVectors = \
-        createFeatureVectors(addTrainsetFilename, addTrainDependencies)
-    for index in xrange(len(addTrainLabel)):
-        trainLabel.append(addTrainLabel[index])
-        trainFeatureVectors.append(addTrainFeatureVectors[index])
+def combineAdditionalTrainset(addTrainsetList, trainLabel, trainFeatureVectors):
+    for addTrainset in addTrainsetList:
+        addTrainsetFilename, addTrainsetDepFilename = \
+            initAdditionalTrainset(addTrainset)
+        addTrainDependencies = getDependency(addTrainsetDepFilename)
+        addTrainLabel, addTrainFeatureVectors = \
+            createFeatureVectors(addTrainsetFilename, addTrainDependencies)
+        for index in xrange(len(addTrainLabel)):
+            trainLabel.append(addTrainLabel[index])
+            trainFeatureVectors.append(addTrainFeatureVectors[index])
+        print len(trainLabel)
 
     return trainLabel, trainFeatureVectors
+
+
+def trainNewModel():
+    """Create feature vectors of training set """
+    print "Creating feature vectors for trainset..."
+    trainDependencies = getDependency(trainDepFilename)
+    trainLabel, trainFeatureVectors = \
+        createFeatureVectors(trainFilename, trainDependencies)
+    print "Length of feature vector for trainset: %d" \
+          % len(trainFeatureVectors[0])
+    if not len(addTrainsetList) == 0:
+        print "Combining feature vectors of additional trainset..."
+        trainLabel, trainFeatureVectors = \
+            combineAdditionalTrainset(
+                addTrainsetList, trainLabel, trainFeatureVectors)
+    print "Feature vectors of trainset created."
+    SVMTrain(trainLabel, trainFeatureVectors, modelFilename)
 
 
 if __name__ == '__main__':
 
     """check arguments"""
-    if len(sys.argv) < 2 or len(sys.argv) > 4:
-        print "Usage :: python main.py model dataset additionalTrainset "
+    if len(sys.argv) < 2:
+        print "Usage :: python main.py model dataset " \
+              "additionalTrainset additionalTrainset ..."
         sys.exit("Error: wrong arguments")
     else:
-        dataset, addTrainset, modelFilename = checkArguments()
-        exit(0)
+        dataset, addTrainsetList, modelFilename = checkArguments()
         encode = {'positive': 1.0, 'negative': 2.0, 'neutral': 3.0}
         decode = {1.0: 'positive', 2.0: 'negative', 3.0: 'neutral'}
         trainFilename, testFilename, \
@@ -244,26 +203,13 @@ if __name__ == '__main__':
     PosNegWordsDict = loadPosNegWords()
     AFINNDict = loadAFINNLexicon()
 
-    trainDependencies, testDependencies = \
-        loadDependency(trainDepFilename, testDepFilename)
-
-    """Create feature vectors of training set """
-    print "\n"
-    print "Creating feature vectors for trainset..."
-    trainLabel, trainFeatureVectors = \
-        createFeatureVectors(trainFilename, trainDependencies)
-    print "Length of feature vector for trainset: %d" \
-          % len(trainFeatureVectors[0])
-
-    if not addTrainset == "":
-        trainLabel, trainFeatureVectors = \
-            combineAdditionalTrainset(
-                addTrainset, trainLabel, trainFeatureVectors)
-
-    print "Feature vectors of trainset created."
+    isTrainRequired = raw_input("Train new model? (y for yes):")
+    if isTrainRequired == "yes" or isTrainRequired == "y":
+        trainNewModel()
 
     """Create feature vectors of testset """
     print "Creating feature vectors for testset..."
+    testDependencies = getDependency(testDepFilename)
     testLabel, testFeatureVectors = \
         createFeatureVectors(testFilename, testDependencies)
 
@@ -274,24 +220,9 @@ if __name__ == '__main__':
     for i in range(len(testLabel)):
         goldStandard.append(decode[testLabel[i]])
 
-    encodePredictLabel = svmClassifier(
-        trainLabel, testLabel, trainFeatureVectors, testFeatureVectors)
+    encodePredictLabel = SVMTest(testLabel, testFeatureVectors, modelFilename)
 
-    # print predictLabel[1:10]
     for i in range(len(encodePredictLabel)):
         predictLabel.append(decode[encodePredictLabel[i]])
 
-    f = open('..//src//taskB.pred', 'w')
-    f.write('\n'.join(predictLabel))
-    f.close()
-
-    if dataset.startswith("Twitter") or dataset.startswith("twitter"):
-        year = re.findall(r'\d+', dataset)[0]
-        predFilename = \
-                "../dataset/SemEval2014-Task9/Twitter-%s/%s_pred.csv" \
-                % (year, dataset)
-        Semeval2013Output(predictLabel, goldFilename, predFilename)
-    else:
-        predFilename = "../result/%s.pred" % dataset
-        Semeval2014Output(predictLabel, goldFilename, predFilename)
-
+    output(dataset, goldFilename, predictLabel)

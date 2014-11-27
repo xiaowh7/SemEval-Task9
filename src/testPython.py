@@ -51,5 +51,8 @@ __author__ = 'seven'
 # import re
 # ans = re.findall(r'\d+', 'Twitter-2013')
 # print ans
-ans = raw_input("train required? (y/n):")
-print ans
+# ans = raw_input("train required? (y/n):")
+# print ans
+l = [1, 4, 6, 7, 9, 12]
+for i in xrange(3, len(l)):
+    print l[i]

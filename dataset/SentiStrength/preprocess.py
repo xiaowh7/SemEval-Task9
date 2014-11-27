@@ -3,7 +3,7 @@ import re
 import langdetector
 
 infile = open('./origin/twitter4242.txt', 'r')
-outfile = open('full.csv', 'w')
+outfile = open('raw.csv', 'w')
 outfile1 = open('tweets.csv', 'w')
 isFirst = True
 cnt = 0
